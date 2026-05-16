@@ -1,0 +1,59 @@
+{% extends 'portal/base.html' %}
+
+{% block content %}
+<div class="w-full max-w-md">
+    <div class="text-center mb-8">
+        <div class="inline-flex items-center gap-2 bg-green-500/10 text-green-400 px-4 py-1.5 rounded-full text-sm font-bold mb-4">
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+            Connected
+        </div>
+        <h1 class="text-3xl font-bold text-white mb-2">Active Session</h1>
+        <p class="text-slate-400">Enjoy your high-speed connection</p>
+    </div>
+
+    <div class="glass p-8 rounded-3xl border border-slate-800 text-center mb-6">
+        <span class="text-slate-500 text-sm font-semibold uppercase tracking-wider block mb-4">Time Remaining</span>
+        <div class="text-5xl font-black text-white tracking-tight" id="timer">
+            {{ session.time_left|default:"00:00:00" }}
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 mb-8">
+        <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800">
+            <span class="text-xs text-slate-500 font-bold block mb-1">Upload</span>
+            <span class="text-lg font-bold text-white">{{ session.bytes_in_formatted|default:"0 KB" }}</span>
+        </div>
+        <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800">
+            <span class="text-xs text-slate-500 font-bold block mb-1">Download</span>
+            <span class="text-lg font-bold text-white">{{ session.bytes_out_formatted|default:"0 KB" }}</span>
+        </div>
+    </div>
+
+    <form action="{{ link_logout }}" method="post">
+        <button type="submit" class="w-full bg-slate-800 hover:bg-red-600 text-white font-bold py-4 rounded-xl transition-all">
+            Disconnect Session
+        </button>
+    </form>
+</div>
+
+<script>
+    // Simple countdown logic
+    let timeLeft = "{{ session.seconds_left|default:0 }}";
+    const timerEl = document.getElementById('timer');
+
+    function updateTimer() {
+        if (timeLeft <= 0) return;
+        timeLeft--;
+        
+        const h = Math.floor(timeLeft / 3600).toString().padStart(2, '0');
+        const m = Math.floor((timeLeft % 3600) / 60).toString().padStart(2, '0');
+        const s = (timeLeft % 60).toString().padStart(2, '0');
+        
+        timerEl.innerText = `${h}:${m}:${s}`;
+    }
+
+    if (timeLeft > 0) {
+        setInterval(updateTimer, 1000);
+    }
+</script>
+{% endblock %}

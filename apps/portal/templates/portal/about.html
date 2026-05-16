@@ -1,0 +1,73 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}About Us - ConnectPro WiFi{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto py-12 px-6">
+    <div class="text-center mb-20 relative">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10"></div>
+        <h1 class="text-5xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">Our <span class="text-primary">Mission</span></h1>
+        <p class="text-xl text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed">Empowering communities with ultra-fast, affordable, and reliable internet access for a digital-first world.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-32">
+        <div class="relative">
+            <div class="absolute -inset-4 bg-gradient-to-tr from-primary/20 to-secondary/20 rounded-[3rem] blur-2xl opacity-30 animate-pulse"></div>
+            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800" alt="Networking" class="rounded-[3rem] shadow-2xl relative z-10 animate-float border-4 border-white">
+        </div>
+        <div class="space-y-8">
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-primary rounded-full text-xs font-black uppercase tracking-widest">
+                Our Story
+            </div>
+            <h2 class="text-4xl font-black text-slate-900 leading-tight">Bridging the digital divide with <span class="text-secondary">Passion</span>.</h2>
+            <p class="text-lg text-slate-500 leading-relaxed font-medium">
+                ConnectPro is a leading WiFi hotspot provider dedicated to bridging the digital divide. We believe that high-speed internet should be accessible to everyone, everywhere.
+            </p>
+            <div class="grid grid-cols-2 gap-6 pt-4">
+                <div class="p-4 rounded-3xl bg-slate-50 border border-slate-100">
+                    <p class="text-3xl font-black text-primary mb-1">10k+</p>
+                    <p class="text-[10px] font-black text-slate-400 uppercase">Active Users</p>
+                </div>
+                <div class="p-4 rounded-3xl bg-slate-50 border border-slate-100">
+                    <p class="text-3xl font-black text-secondary mb-1">99.9%</p>
+                    <p class="text-[10px] font-black text-slate-400 uppercase">Uptime</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mb-12">
+        <h3 class="text-3xl font-black text-slate-900">Why Choose <span class="text-primary">ConnectPro</span>?</h3>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="premium-card p-10 rounded-[3rem] text-center">
+            <div class="w-16 h-16 bg-blue-50 text-primary rounded-[1.5rem] flex items-center justify-center mb-6 mx-auto group-hover:bg-primary group-hover:text-white transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+            </div>
+            <h4 class="text-xl font-black text-slate-900 mb-3">Ultra Fast</h4>
+            <p class="text-sm text-slate-500 font-medium leading-relaxed">Experience true fiber-optic speeds delivered directly to your device wirelessly.</p>
+        </div>
+        <div class="premium-card p-10 rounded-[3rem] text-center border-primary/10 bg-primary/[0.02]">
+            <div class="w-16 h-16 bg-orange-50 text-secondary rounded-[1.5rem] flex items-center justify-center mb-6 mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <h4 class="text-xl font-black text-slate-900 mb-3">Instant Pay</h4>
+            <p class="text-sm text-slate-500 font-medium leading-relaxed">No complex setups. Just connect, pay with M-PESA, and you're online in seconds.</p>
+        </div>
+        <div class="premium-card p-10 rounded-[3rem] text-center">
+            <div class="w-16 h-16 bg-green-50 text-green-600 rounded-[1.5rem] flex items-center justify-center mb-6 mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </div>
+            <h4 class="text-xl font-black text-slate-900 mb-3">Expert Care</h4>
+            <p class="text-sm text-slate-500 font-medium leading-relaxed">Our dedicated technical team is available 24/7 to ensure your connection stays perfect.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

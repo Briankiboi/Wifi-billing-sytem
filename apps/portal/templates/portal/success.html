@@ -1,0 +1,52 @@
+{% extends 'portal/base.html' %}
+
+{% block content %}
+<div class="w-full max-w-md text-center">
+    <div class="mb-8">
+        <div class="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+        <h1 class="text-3xl font-bold text-white mb-2">Payment Successful!</h1>
+        <p class="text-slate-400">Authenticating your device with the network...</p>
+    </div>
+
+    <div class="glass p-8 rounded-3xl border border-slate-800 mb-8">
+        <div class="animate-pulse flex flex-col items-center">
+            <div class="h-2 w-48 bg-indigo-500/20 rounded-full mb-4 overflow-hidden">
+                <div class="h-full bg-indigo-500 w-1/2 animate-[progress_2s_infinite]"></div>
+            </div>
+            <span class="text-indigo-400 font-semibold text-sm">Finishing setup...</span>
+        </div>
+    </div>
+
+    <!-- Hidden MikroTik Login Form -->
+    <form name="login" action="{{ link_login }}" method="post" id="mikrotikForm">
+        <input type="hidden" name="username" value="{{ mac }}">
+        <input type="hidden" name="password" value="{{ mac }}">
+        <input type="hidden" name="dst" value="{{ link_orig }}">
+        <input type="hidden" name="popup" value="true">
+        
+        <button type="submit" class="text-slate-500 text-sm underline hover:text-white transition-colors">
+            Click here if not redirected automatically
+        </button>
+    </form>
+</div>
+
+<style>
+    @keyframes progress {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(200%); }
+    }
+</style>
+
+<script>
+    // Auto-submit after 3 seconds to allow MikroTik to process the API call from Celery
+    window.onload = function() {
+        setTimeout(function() {
+            document.getElementById('mikrotikForm').submit();
+        }, 3000);
+    };
+</script>
+{% endblock %}

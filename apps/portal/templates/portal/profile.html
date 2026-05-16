@@ -1,0 +1,146 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}My Profile - ConnectPro WiFi{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto py-8 px-6">
+    <!-- User Info Section -->
+    <div class="premium-card p-10 rounded-[3rem] flex flex-col md:flex-row items-center gap-8 mb-16 relative overflow-hidden">
+        <div class="absolute -right-20 -top-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+        
+        <div class="w-24 h-24 bg-gradient-to-br from-primary to-blue-700 rounded-[2rem] flex items-center justify-center text-white shadow-2xl shadow-blue-200 relative z-10 animate-float">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+        </div>
+        
+        <div class="text-center md:text-left flex-grow relative z-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-primary rounded-full text-[10px] font-black uppercase tracking-widest mb-3">
+                Verified Member
+            </div>
+            <h1 class="text-3xl font-black text-slate-900 mb-1 tracking-tight">Account Overview</h1>
+            <p class="text-slate-500 font-bold flex items-center justify-center md:justify-start gap-2">
+                <span class="text-xs font-black text-slate-400 uppercase tracking-tighter">Phone:</span>
+                <span class="text-slate-900">+254 {{ user.formatted_phone }}</span>
+            </p>
+        </div>
+        
+        <div class="flex gap-4 relative z-10">
+            <a href="{% url 'logout' %}" class="btn-secondary text-white px-8 py-4 rounded-2xl font-black text-sm shadow-xl transition-all">
+                Sign Out
+            </a>
+        </div>
+    </div>
+
+    <!-- Active Sessions -->
+    <div class="mb-20">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+                Active <span class="text-primary">Packages</span>
+            </h2>
+        </div>
+        
+        {% if active_sessions %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {% for session in active_sessions %}
+                <div class="bg-gradient-to-br from-primary via-blue-700 to-blue-900 p-10 rounded-[3rem] text-white shadow-2xl shadow-blue-200 relative overflow-hidden group">
+                    <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-white/10 rounded-full group-hover:scale-110 transition-transform duration-700"></div>
+                    <div class="absolute -left-20 -top-20 w-48 h-48 bg-orange-400/20 rounded-full blur-3xl"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-10">
+                            <div>
+                                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-blue-200 block mb-2">Current Subscription</span>
+                                <h3 class="text-3xl font-black tracking-tight">{{ session.package.name }}</h3>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-md px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-white/20">Active</div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-8 pt-8 border-t border-white/10">
+                            <div>
+                                <span class="text-[10px] text-blue-200 block mb-1 font-black uppercase tracking-widest">Expires On</span>
+                                <span class="font-black text-xl leading-none">{{ session.end_time|date:"d M Y" }}</span>
+                                <span class="block text-xs text-blue-200 mt-1 font-bold">{{ session.end_time|date:"H:i" }} HRS</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-blue-200 block mb-1 font-black uppercase tracking-widest">Connection</span>
+                                <span class="font-black text-xl leading-none">{{ session.package.mbps_down }} Mbps</span>
+                                <span class="block text-xs text-blue-200 mt-1 font-bold italic">Unlimited Data</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="premium-card p-16 rounded-[3rem] text-center bg-slate-50/50 border-dashed border-2">
+                <div class="w-20 h-20 bg-slate-100 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-slate-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                    </svg>
+                </div>
+                <p class="text-slate-400 font-black text-lg mb-6">No active subscriptions found.</p>
+                <a href="{% url 'portal-index' %}" class="btn-primary text-white px-10 py-4 rounded-[1.5rem] font-black shadow-xl inline-flex items-center gap-3 group">
+                    Explore Packages
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Purchase History -->
+    <div>
+        <h2 class="text-2xl font-black text-slate-900 tracking-tight mb-8">
+            Purchase <span class="text-secondary">History</span>
+        </h2>
+        <div class="premium-card rounded-[3rem] overflow-hidden">
+            {% if past_sessions %}
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 border-b border-slate-100">
+                            <tr>
+                                <th class="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Transaction Date</th>
+                                <th class="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Package Details</th>
+                                <th class="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Amount Paid</th>
+                                <th class="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            {% for session in past_sessions %}
+                            <tr class="hover:bg-blue-50/30 transition-colors group">
+                                <td class="px-10 py-6">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-black text-slate-900">{{ session.start_time|date:"d M, Y" }}</span>
+                                        <span class="text-[10px] text-slate-400 font-bold">{{ session.start_time|date:"H:i" }} HRS</span>
+                                    </div>
+                                </td>
+                                <td class="px-10 py-6">
+                                    <span class="text-sm font-black text-slate-700 group-hover:text-primary transition-colors">{{ session.package.name }}</span>
+                                </td>
+                                <td class="px-10 py-6">
+                                    <span class="text-sm font-black text-slate-900">KES {{ session.package.price|floatformat:0 }}</span>
+                                </td>
+                                <td class="px-10 py-6">
+                                    {% if session.is_active and session.end_time > now %}
+                                        <span class="px-4 py-1.5 bg-green-50 text-green-600 rounded-xl text-[10px] font-black uppercase tracking-wider">Active</span>
+                                    {% else %}
+                                        <span class="px-4 py-1.5 bg-slate-100 text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-wider">Completed</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="p-20 text-center">
+                    <p class="text-slate-400 font-black uppercase tracking-widest text-xs">No transaction records found</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

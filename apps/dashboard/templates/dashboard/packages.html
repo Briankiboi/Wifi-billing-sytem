@@ -1,0 +1,61 @@
+{% extends 'dashboard/base_admin.html' %}
+
+{% block title %}Manage Packages - NetBilling{% endblock %}
+
+{% block content %}
+<header class="flex justify-between items-center mb-10">
+    <div>
+        <h2 class="text-3xl font-bold text-white tracking-tight">Packages</h2>
+        <p class="text-slate-500">Configure WiFi pricing and speed limits</p>
+    </div>
+    <div class="bg-indigo-600 px-6 py-3 rounded-2xl text-white font-bold cursor-pointer hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-500/20 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+        </svg>
+        New Package
+    </div>
+</header>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {% for pkg in packages %}
+    <div class="card p-8 group hover:border-indigo-500/50 transition-all duration-500">
+        <div class="flex justify-between items-start mb-8">
+            <div class="w-12 h-12 bg-indigo-600/10 rounded-2xl flex items-center justify-center text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+            </div>
+            <div class="text-right">
+                <span class="block text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Price</span>
+                <span class="text-2xl font-black text-white">KES {{ pkg.price|floatformat:0 }}</span>
+            </div>
+        </div>
+
+        <h3 class="text-xl font-bold text-white mb-2">{{ pkg.name }}</h3>
+        <p class="text-slate-500 text-sm mb-6">{{ pkg.description|default:"Premium high-speed internet access." }}</p>
+
+        <div class="grid grid-cols-2 gap-4 py-6 border-t border-slate-800">
+            <div>
+                <span class="block text-[8px] font-black uppercase text-slate-500 tracking-widest mb-1">Speed</span>
+                <span class="text-sm font-bold text-slate-200">{{ pkg.mbps_down }} Mbps</span>
+            </div>
+            <div>
+                <span class="block text-[8px] font-black uppercase text-slate-500 tracking-widest mb-1">Duration</span>
+                <span class="text-sm font-bold text-slate-200">{{ pkg.duration_display }}</span>
+            </div>
+        </div>
+
+        <div class="flex gap-3 mt-4">
+            <a href="{% url 'package-edit' pkg.pk %}" class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-white text-xs font-black rounded-xl transition-all uppercase tracking-widest text-center">
+                Edit
+            </a>
+            <button class="px-4 py-3 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-xl transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

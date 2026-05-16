@@ -1,0 +1,157 @@
+{% extends 'dashboard/base_admin.html' %}
+
+{% block title %}Admin Overview - NetBilling{% endblock %}
+
+{% block content %}
+<header class="flex justify-between items-center mb-10">
+    <div>
+        <h2 class="text-3xl font-bold text-white tracking-tight">Network Overview</h2>
+        <p class="text-slate-500">Real-time performance and revenue tracking</p>
+    </div>
+    <div class="bg-indigo-600 px-6 py-3 rounded-2xl text-white font-bold cursor-pointer hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-500/20">
+        Export Reports
+    </div>
+</header>
+
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+    <div class="card p-8">
+        <span class="text-slate-500 text-[10px] font-black uppercase tracking-widest">Total Revenue</span>
+        <h3 class="text-3xl font-black text-white mt-2">KES {{ total_revenue|floatformat:0 }}</h3>
+        <p class="text-green-400 text-[10px] mt-2 font-black uppercase tracking-wider">+12% from last month</p>
+    </div>
+    <div class="card p-8">
+        <span class="text-slate-500 text-[10px] font-black uppercase tracking-widest">Active Sessions</span>
+        <h3 class="text-3xl font-black text-white mt-2">{{ active_sessions }}</h3>
+        <div class="flex items-center gap-2 mt-2">
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            <span class="text-green-400 text-[10px] font-black uppercase tracking-widest">Live Now</span>
+        </div>
+    </div>
+    <div class="card p-8">
+        <span class="text-slate-500 text-[10px] font-black uppercase tracking-widest">Today's Sales</span>
+        <h3 class="text-3xl font-black text-white mt-2">KES {{ today_revenue|floatformat:0 }}</h3>
+        <p class="text-slate-500 text-[10px] mt-2 font-black uppercase tracking-widest">Updated 5m ago</p>
+    </div>
+    <div class="card p-8">
+        <span class="text-slate-500 text-[10px] font-black uppercase tracking-widest">Online Routers</span>
+        <h3 class="text-3xl font-black text-white mt-2">{{ online_routers }}</h3>
+        <p class="text-slate-500 text-[10px] mt-2 font-black uppercase tracking-widest">Total 4 locations</p>
+    </div>
+</div>
+
+<!-- Charts & Details -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Revenue Chart -->
+    <div class="card p-10 lg:col-span-2">
+        <h4 class="text-xl font-bold text-white mb-8">Revenue Trend (Last 7 Days)</h4>
+        <div class="h-80">
+            <canvas id="revenueChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Top Packages -->
+    <div class="card p-10">
+        <h4 class="text-xl font-bold text-white mb-8">Top Packages</h4>
+        <div class="space-y-8">
+            {% for pkg in top_packages %}
+            <div class="flex justify-between items-center group">
+                <div>
+                    <span class="block font-bold text-white group-hover:text-indigo-400 transition-colors">{{ pkg.name }}</span>
+                    <span class="text-xs text-slate-500 font-bold uppercase tracking-wider">{{ pkg.sales_count }} sales</span>
+                </div>
+                <span class="text-indigo-400 font-black">KES {{ pkg.price|floatformat:0 }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Recent Failures -->
+<div class="mt-10 card p-10">
+    <h4 class="text-xl font-bold text-white mb-8">Recent Failed Payments</h4>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] border-b border-slate-800">
+                    <th class="pb-6 px-4">Customer Phone</th>
+                    <th class="pb-6 px-4">Amount</th>
+                    <th class="pb-6 px-4">Result Reason</th>
+                    <th class="pb-6 px-4 text-right">Timestamp</th>
+                </tr>
+            </thead>
+            <tbody class="text-slate-300 divide-y divide-slate-800/30">
+                {% for tx in recent_failures %}
+                <tr class="hover:bg-slate-800/20 transition-colors group">
+                    <td class="py-5 px-4 font-bold">+{{ tx.user_phone }}</td>
+                    <td class="py-5 px-4">
+                        <span class="text-slate-100 font-black">KES {{ tx.amount }}</span>
+                    </td>
+                    <td class="py-5 px-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+                            <span class="text-red-400 text-[10px] font-bold uppercase tracking-wide">{{ tx.result_description|truncatechars:60 }}</span>
+                        </div>
+                    </td>
+                    <td class="py-5 px-4 text-sm text-slate-500 text-right font-medium">
+                        {{ tx.created_at|date:"M d, H:i" }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ chart_labels|safe }},
+            datasets: [{
+                label: 'Daily Revenue',
+                data: {{ chart_data|safe }},
+                borderColor: '#6366f1',
+                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 4,
+                pointBackgroundColor: '#6366f1',
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1e293b',
+                    titleFont: { size: 12, weight: 'bold' },
+                    bodyFont: { size: 14, weight: 'black' },
+                    padding: 12,
+                    cornerRadius: 8,
+                    displayColors: false
+                }
+            },
+            scales: {
+                y: {
+                    grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+                    ticks: { 
+                        color: '#94a3b8', 
+                        font: { weight: 'bold', size: 11 },
+                        callback: function(value) { return 'KES ' + value; }
+                    }
+                },
+                x: {
+                    grid: { display: false, drawBorder: false },
+                    ticks: { color: '#94a3b8', font: { weight: 'bold', size: 11 } }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
+</html>

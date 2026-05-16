@@ -1,0 +1,284 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Premium WiFi Portal{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb', // Blue
+                        secondary: '#f97316', // Orange
+                        accent: '#fbbf24', // Amber/Gold
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #f97316;
+            --bg-light: #f8fafc;
+        }
+        body { 
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('{% static "portal/img/wifi_bg.png" %}');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .glass { 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04);
+        }
+        .premium-card {
+            background: white;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .premium-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 25px 50px -12px rgba(37, 99, 235, 0.12);
+            border-color: rgba(37, 99, 235, 0.2);
+        }
+        .btn-primary, .btn-hover-target {
+            background: linear-gradient(135deg, var(--primary), #1d4ed8);
+            box-shadow: 0 10px 20px -10px rgba(37, 99, 235, 0.5);
+            transition: all 0.3s ease;
+            color: white !important;
+        }
+        .premium-card:hover .btn-hover-target {
+            background: linear-gradient(135deg, var(--primary), #1d4ed8);
+            color: white !important;
+            box-shadow: 0 10px 20px -10px rgba(37, 99, 235, 0.5);
+        }
+        .btn-primary:hover {
+            box-shadow: 0 15px 25px -10px rgba(37, 99, 235, 0.6);
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary), #ea580c);
+            box-shadow: 0 10px 20px -10px rgba(249, 115, 22, 0.4);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            box-shadow: 0 15px 25px -10px rgba(249, 115, 22, 0.5);
+            transform: translateY(-2px);
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col pt-20">
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-xl border-b border-slate-100 z-50 h-20">
+    <div class="max-w-7xl mx-auto px-4 md:px-8 h-full flex items-center justify-between">
+        
+        <!-- Left: Hamburger + Logo -->
+        <div class="flex items-center gap-4">
+            <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center bg-slate-50 rounded-xl text-slate-600 hover:text-primary transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+                </svg>
+            </button>
+            <a href="{% url 'portal-index' %}" class="flex items-center gap-2 group">
+                <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-blue-200 group-hover:scale-105 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+                    </svg>
+                </div>
+                <span class="text-xl font-black text-slate-900 tracking-tight hidden sm:block">Connect<span class="text-primary">Pro</span></span>
+            </a>
+        </div>
+
+        <!-- Center: Desktop Links -->
+        <div class="hidden md:flex items-center gap-10 text-sm font-bold text-slate-500">
+            <a href="{% url 'portal-index' %}" class="hover:text-primary transition-colors relative group">
+                Home
+                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+            </a>
+            <a href="{% url 'about' %}" class="hover:text-primary transition-colors relative group">
+                About Us
+                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+            </a>
+            <a href="{% url 'contact' %}" class="hover:text-primary transition-colors relative group">
+                Contact
+                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+            </a>
+        </div>
+
+        <!-- Right: User Dropdown -->
+        <div class="flex items-center gap-4 relative">
+            {% if user.is_authenticated %}
+                <button id="user-menu-btn" class="flex items-center gap-3 p-1.5 pr-4 rounded-full bg-slate-50 border border-slate-100 hover:border-primary/20 hover:bg-white transition-all group">
+                    <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-black text-xs shadow-md shadow-blue-100">
+                        {{ user.phone_number|slice:"-2:" }}
+                    </div>
+                    <div class="hidden sm:block text-left">
+                        <p class="text-[10px] font-black text-slate-400 uppercase leading-none mb-1">My Account</p>
+                        <p class="text-xs font-bold text-slate-900 leading-none">{{ user.phone_number }}</p>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 group-hover:text-primary transition-colors" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+
+                <!-- User Dropdown Menu -->
+                <div id="user-dropdown" class="hidden absolute top-full right-0 mt-3 w-56 bg-white rounded-3xl border border-slate-100 shadow-2xl shadow-slate-200/50 z-50 overflow-hidden">
+                    <div class="p-5 border-b border-slate-50 bg-slate-50/50">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Signed in as</p>
+                        <p class="text-sm font-bold text-slate-900">+254 {{ user.formatted_phone }}</p>
+                    </div>
+                    <div class="p-2">
+                        <a href="{% url 'profile' %}" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-primary transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            View Profile
+                        </a>
+                        <a href="{% url 'password_change' %}" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-primary transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Change Password
+                        </a>
+                        <div class="h-px bg-slate-50 my-1 mx-2"></div>
+                        <a href="{% url 'logout' %}" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            Sign Out
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'login' %}" class="text-sm font-bold text-primary hover:underline">Login</a>
+                <a href="{% url 'register' %}" class="bg-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all">Join Now</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white border-b border-slate-100 shadow-2xl z-40">
+        <div class="flex flex-col p-6 gap-4">
+            <a href="{% url 'portal-index' %}" class="text-sm font-bold text-slate-600 hover:text-primary py-2 border-b border-slate-50 transition-colors">Home</a>
+            <a href="{% url 'about' %}" class="text-sm font-bold text-slate-600 hover:text-primary py-2 border-b border-slate-50 transition-colors">About Us</a>
+            <a href="{% url 'contact' %}" class="text-sm font-bold text-slate-600 hover:text-primary py-2 transition-colors">Contact</a>
+        </div>
+    </div>
+</nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-12">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 pt-16 pb-8">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+            <div class="col-span-1 md:col-span-2">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a9.05 9.05 0 0112.728 0m-15.557-5.657a14 14 0 0119.8 0" />
+                        </svg>
+                    </div>
+                    <span class="text-lg font-bold">ConnectPro WiFi</span>
+                </div>
+                <p class="text-slate-500 text-sm max-w-sm">
+                    Providing ultra-fast, reliable hotspot solutions for businesses and individuals across the city. Experience the internet without limits.
+                </p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-4">Quick Links</h4>
+                <ul class="space-y-2 text-sm text-slate-500">
+                    <li><a href="{% url 'about' %}" class="hover:text-primary">About Us</a></li>
+                    <li><a href="{% url 'profile' %}" class="hover:text-primary">My Profile</a></li>
+                    <li><a href="{% url 'contact' %}" class="hover:text-primary">Support</a></li>
+                    <li><a href="#" class="hover:text-primary">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold mb-4">Support</h4>
+                <ul class="space-y-2 text-sm text-slate-500">
+                    <li><a href="#" class="hover:text-primary">Help Center</a></li>
+                    <li><a href="#" class="hover:text-primary">Contact Support</a></li>
+                    <li><a href="#" class="hover:text-primary">Status Page</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="text-center text-slate-400 text-xs border-t border-slate-100 pt-8">
+            &copy; 2026 ConnectPro WiFi Services. All rights reserved. Built with ❤️ for our community.
+        </div>
+    </footer>
+    <script>
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const userBtn = document.getElementById('user-menu-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+
+        // Mobile Menu Toggle
+        if (menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                mobileMenu.classList.toggle('hidden');
+                if (userDropdown) userDropdown.classList.add('hidden');
+            });
+        }
+
+        // User Dropdown Toggle
+        if (userBtn && userDropdown) {
+            userBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userDropdown.classList.toggle('hidden');
+                if (mobileMenu) mobileMenu.classList.add('hidden');
+            });
+        }
+
+        // Close all menus when clicking outside
+        document.addEventListener('click', (e) => {
+            if (mobileMenu && !mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+                mobileMenu.classList.add('hidden');
+            }
+            if (userDropdown && !userDropdown.contains(e.target) && !userBtn.contains(e.target)) {
+                userDropdown.classList.add('hidden');
+            }
+        });
+
+        // Close menus on resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                if (mobileMenu) mobileMenu.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

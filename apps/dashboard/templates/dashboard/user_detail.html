@@ -1,0 +1,87 @@
+{% extends 'dashboard/base_admin.html' %}
+
+{% block title %}User Activity - NetBilling{% endblock %}
+
+{% block content %}
+<header class="mb-12">
+    <a href="{% url 'admin-users' %}" class="text-indigo-400 text-sm font-bold flex items-center gap-2 mb-4 hover:gap-3 transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to Users
+    </a>
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div>
+            <h2 class="text-3xl font-bold text-white tracking-tight">+{{ target_user.phone_number }}</h2>
+            <p class="text-slate-500 font-bold uppercase text-[10px] tracking-[0.2em] mt-2">Member Since {{ target_user.date_joined|date:"M Y" }}</p>
+        </div>
+        <div class="flex gap-4">
+            <div class="bg-indigo-600/10 border border-indigo-500/20 p-4 rounded-2xl">
+                <span class="block text-[8px] font-black uppercase text-indigo-400 tracking-widest mb-1">Total Revenue</span>
+                <span class="text-xl font-black text-white">KES {{ transactions.filter.status_COMPLETED|Sum:'amount'|default:0 }}</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+    <!-- Session History -->
+    <div class="space-y-6">
+        <h3 class="text-xl font-bold text-white flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A10.003 10.003 0 0012 20a10.003 10.003 0 006.2-2.312l.054.091m-9.694-6.333a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0z" />
+            </svg>
+            Session History
+        </h3>
+        <div class="card p-6 divide-y divide-slate-800">
+            {% for session in sessions %}
+            <div class="py-5 first:pt-0 last:pb-0">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="font-bold text-white text-sm">{{ session.package.name }}</span>
+                    {% if session.is_active %}
+                    <span class="px-2 py-0.5 bg-green-500/10 text-green-500 rounded text-[8px] font-black uppercase">Active</span>
+                    {% else %}
+                    <span class="px-2 py-0.5 bg-slate-800 text-slate-500 rounded text-[8px] font-black uppercase">Expired</span>
+                    {% endif %}
+                </div>
+                <div class="flex justify-between items-center text-[10px] text-slate-500 font-bold">
+                    <span>Started: {{ session.start_time|date:"M d, H:i" }}</span>
+                    <span>Router: {{ session.router.name }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-slate-500 text-sm italic py-4">No hotspot sessions found for this user.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Payment History -->
+    <div class="space-y-6">
+        <h3 class="text-xl font-bold text-white flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            Payment History
+        </h3>
+        <div class="card p-6 divide-y divide-slate-800">
+            {% for tx in transactions %}
+            <div class="py-5 first:pt-0 last:pb-0 flex justify-between items-center">
+                <div>
+                    <span class="block font-bold text-white text-sm">KES {{ tx.amount }}</span>
+                    <span class="text-[10px] text-slate-500 font-bold">{{ tx.created_at|date:"M d, Y @ H:i" }}</span>
+                </div>
+                <div>
+                    {% if tx.status == 'COMPLETED' %}
+                    <span class="text-green-500 font-black text-[10px] uppercase tracking-widest">Success</span>
+                    {% else %}
+                    <span class="text-red-500 font-black text-[10px] uppercase tracking-widest">Failed</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-slate-500 text-sm italic py-4">No transactions found for this user.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
