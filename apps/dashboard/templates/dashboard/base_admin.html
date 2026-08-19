@@ -17,7 +17,7 @@
 <body class="text-slate-200">
     <div class="flex min-h-screen">
         <!-- Sidebar -->
-        <div class="w-64 border-r border-slate-800 p-8 hidden lg:block bg-slate-950/50 backdrop-blur-xl fixed h-full">
+        <div id="sidebar" class="w-64 border-r border-slate-800 p-8 hidden lg:block bg-slate-950/50 backdrop-blur-xl fixed h-full">
             <div class="flex items-center gap-3 mb-10">
                 <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -54,13 +54,66 @@
                 </a>
             </div>
         </div>
+        <!-- Mobile topbar (visible on small screens) -->
+        <div class="lg:hidden fixed top-0 left-0 right-0 bg-slate-900/80 backdrop-blur z-40 h-16 flex items-center px-4">
+            <button id="mobile-sidebar-btn" aria-controls="sidebar" aria-expanded="false" aria-label="Open sidebar" class="text-slate-200 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <h1 class="text-lg font-bold text-white tracking-tight">NetBilling</h1>
+            </div>
+        </div>
+
+        <div id="sidebar-backdrop" class="hidden fixed inset-0 bg-black/40 z-30 lg:hidden"></div>
 
         <!-- Main Content Wrapper -->
-        <div class="flex-1 lg:ml-64">
+        <div class="flex-1 lg:ml-64 pt-16 lg:pt-0">
             <main class="p-8 lg:p-12">
                 {% block content %}{% endblock %}
             </main>
         </div>
     </div>
+    <script>
+        (function(){
+            const mobileBtn = document.getElementById('mobile-sidebar-btn');
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+
+            function openSidebar(){
+                if (!sidebar) return;
+                sidebar.classList.remove('hidden');
+                // ensure it's on top
+                sidebar.classList.add('z-50');
+                backdrop.classList.remove('hidden');
+                mobileBtn.setAttribute('aria-expanded','true');
+            }
+
+            function closeSidebar(){
+                if (!sidebar) return;
+                sidebar.classList.add('hidden');
+                backdrop.classList.add('hidden');
+                mobileBtn.setAttribute('aria-expanded','false');
+            }
+
+            if (mobileBtn) mobileBtn.addEventListener('click', (e)=>{ e.stopPropagation(); openSidebar(); });
+            if (backdrop) backdrop.addEventListener('click', closeSidebar);
+            // close on resize to large
+            window.addEventListener('resize', ()=>{ if (window.innerWidth >= 1024) { if (sidebar) sidebar.classList.remove('hidden'); if (backdrop) backdrop.classList.add('hidden'); if (mobileBtn) mobileBtn.setAttribute('aria-expanded','false'); }});
+            // close when clicking outside sidebar on small screens
+            document.addEventListener('click', (e)=>{
+                if (!sidebar || sidebar.classList.contains('hidden')) return;
+                if (!sidebar.contains(e.target) && e.target !== mobileBtn){
+                    closeSidebar();
+                }
+            });
+        })();
+    </script>
 </body>
 </html>

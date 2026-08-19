@@ -104,7 +104,7 @@
         
         <!-- Left: Hamburger + Logo -->
         <div class="flex items-center gap-4">
-            <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center bg-slate-50 rounded-xl text-slate-600 hover:text-primary transition-colors">
+            <button id="mobile-menu-btn" aria-expanded="false" aria-controls="mobile-menu" aria-label="Toggle navigation" class="md:hidden w-10 h-10 flex items-center justify-center bg-slate-50 rounded-xl text-slate-600 hover:text-primary transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
                 </svg>
@@ -133,12 +133,18 @@
                 Contact
                 <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
             </a>
+            {% if user.is_staff %}
+            <a href="{% url 'admin:login' %}?next={% url 'admin:index' %}" class="hover:text-primary transition-colors relative group">
+                Admin
+                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+            </a>
+            {% endif %}
         </div>
 
         <!-- Right: User Dropdown -->
         <div class="flex items-center gap-4 relative">
             {% if user.is_authenticated %}
-                <button id="user-menu-btn" class="flex items-center gap-3 p-1.5 pr-4 rounded-full bg-slate-50 border border-slate-100 hover:border-primary/20 hover:bg-white transition-all group">
+                <button id="user-menu-btn" aria-expanded="false" aria-controls="user-dropdown" aria-label="User menu" class="flex items-center gap-3 p-1.5 pr-4 rounded-full bg-slate-50 border border-slate-100 hover:border-primary/20 hover:bg-white transition-all group">
                     <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-black text-xs shadow-md shadow-blue-100">
                         {{ user.phone_number|slice:"-2:" }}
                     </div>
@@ -192,6 +198,9 @@
             <a href="{% url 'portal-index' %}" class="text-sm font-bold text-slate-600 hover:text-primary py-2 border-b border-slate-50 transition-colors">Home</a>
             <a href="{% url 'about' %}" class="text-sm font-bold text-slate-600 hover:text-primary py-2 border-b border-slate-50 transition-colors">About Us</a>
             <a href="{% url 'contact' %}" class="text-sm font-bold text-slate-600 hover:text-primary py-2 transition-colors">Contact</a>
+            {% if user.is_staff %}
+            <a href="{% url 'admin:login' %}?next={% url 'admin:index' %}" class="text-sm font-bold text-slate-600 hover:text-primary py-2 transition-colors">Admin</a>
+            {% endif %}
         </div>
     </div>
 </nav>
@@ -224,6 +233,9 @@
                     <li><a href="{% url 'profile' %}" class="hover:text-primary">My Profile</a></li>
                     <li><a href="{% url 'contact' %}" class="hover:text-primary">Support</a></li>
                     <li><a href="#" class="hover:text-primary">Terms of Service</a></li>
+                    {% if user.is_staff %}
+                    <li><a href="{% url 'admin:login' %}?next={% url 'admin:index' %}" class="hover:text-primary">Admin</a></li>
+                    {% endif %}
                 </ul>
             </div>
             <div>
@@ -249,8 +261,13 @@
         if (menuBtn && mobileMenu) {
             menuBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
+                const isOpen = !mobileMenu.classList.contains('hidden');
                 mobileMenu.classList.toggle('hidden');
-                if (userDropdown) userDropdown.classList.add('hidden');
+                menuBtn.setAttribute('aria-expanded', String(!isOpen));
+                if (userDropdown) {
+                    userDropdown.classList.add('hidden');
+                    if (userBtn) userBtn.setAttribute('aria-expanded', 'false');
+                }
             });
         }
 
@@ -258,8 +275,11 @@
         if (userBtn && userDropdown) {
             userBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
+                const isOpen = !userDropdown.classList.contains('hidden');
                 userDropdown.classList.toggle('hidden');
+                userBtn.setAttribute('aria-expanded', String(!isOpen));
                 if (mobileMenu) mobileMenu.classList.add('hidden');
+                if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
             });
         }
 
@@ -267,9 +287,11 @@
         document.addEventListener('click', (e) => {
             if (mobileMenu && !mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
                 mobileMenu.classList.add('hidden');
+                if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
             }
             if (userDropdown && !userDropdown.contains(e.target) && !userBtn.contains(e.target)) {
                 userDropdown.classList.add('hidden');
+                if (userBtn) userBtn.setAttribute('aria-expanded', 'false');
             }
         });
 
@@ -277,8 +299,24 @@
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 768) {
                 if (mobileMenu) mobileMenu.classList.add('hidden');
+                if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
             }
         });
+
+        // Toggle password visibility helper
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.setAttribute('aria-pressed', 'true');
+                btn.querySelector('svg').innerHTML = '<path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/><path d="M12 9a3 3 0 100 6 3 3 0 000-6z"/>';
+            } else {
+                input.type = 'password';
+                btn.setAttribute('aria-pressed', 'false');
+                btn.querySelector('svg').innerHTML = '<path d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.958 9.958 0 012.223-3.577M6.18 6.18A9.954 9.954 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.986 9.986 0 01-4.7 6.021M3 3l18 18"/>';
+            }
+        }
     </script>
 </body>
 </html>
