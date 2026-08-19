@@ -28,8 +28,15 @@
 
             <div>
                 <label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Password</label>
-                <input type="password" name="password" placeholder="••••••••" required
-                       class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-6 text-slate-900 font-bold focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all">
+                <div class="relative">
+                    <input id="id_password" type="password" name="password" placeholder="••••••••" required
+                           class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-6 text-slate-900 font-bold focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all">
+                    <button type="button" aria-pressed="false" aria-label="Toggle password visibility" onclick="togglePassword('id_password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.958 9.958 0 012.223-3.577M6.18 6.18A9.954 9.954 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.986 9.986 0 01-4.7 6.021M3 3l18 18"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             <button type="submit" 
@@ -45,6 +52,14 @@
             <p class="text-slate-500 text-sm">
                 New to ConnectPro? 
                 <a href="{% url 'register' %}" class="text-secondary hover:text-orange-600 font-bold">Create an account</a>
+            </p>
+            <p class="text-slate-500 text-sm mt-2">
+                Admin? 
+                <a href="{% url 'admin:login' %}?next={% url 'admin:index' %}" class="text-primary hover:underline font-bold">Django Admin login</a>
+            </p>
+            <p class="text-slate-500 text-sm mt-1">
+                Staff dashboard: 
+                <a href="{% url 'admin-dashboard' %}" class="text-primary hover:underline font-bold">Custom Admin Dashboard</a>
             </p>
         </div>
     </div>
